@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,13 +19,14 @@ import java.util.ArrayList;
  */
 
 public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
-    static final String TAG = "UPDATE DATA";
+    private static final String TAG = "UPDATE DATA";
 
     @Override
     protected ArrayList<Branch> doInBackground(String... strings) {
         //TODO: update the data form strings[0]
         return downloadData(strings[0]);
     }
+    //TODO override on post execute
 
     private ArrayList<Branch> downloadData(String input_url) {
         ArrayList<Branch> result = new ArrayList<>();
@@ -48,21 +50,31 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
 
                 //convert the input stream into a string
                 data = readInput(new BufferedReader(new InputStreamReader(inputStream)));
-                result = parseData(data);
+                result = parseXMLData(data);
             } finally {
                 if (inputStream != null) {inputStream.close();}
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return result;
     }
 
-    private ArrayList<Branch> parseData(String data) {
-        return new ArrayList<>();
+    private ArrayList<Branch> parseXMLData(String data) {
+        ArrayList<Branch> result = new ArrayList<>();
+
+
+        //TODO FINISH
+
+        return result;
+    }
+    private Branch parseHTMLData(String name, String HTMLData){
+        String[] details = new String[5];
+
+
+
+        return new Branch(name, details[0], details[1], details[2], details[3]);
     }
 
     private String readInput(BufferedReader bufferedReader) {
