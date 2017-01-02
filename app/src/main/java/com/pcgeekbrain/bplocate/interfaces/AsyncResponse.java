@@ -11,4 +11,5 @@ import java.util.ArrayList;
 
 public interface AsyncResponse {
     void processFinish(ArrayList<Branch> output);
+    void searchFinish(ArrayList<Branch> result);
 }
