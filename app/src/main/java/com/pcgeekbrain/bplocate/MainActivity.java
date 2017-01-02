@@ -9,10 +9,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AsyncResponse{
     private RecyclerView locations_recycler_view;
     private RecyclerView.Adapter locations_adapter;
     private RecyclerView.LayoutManager locations_layout_manager;
@@ -26,8 +28,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO: see if updated in last 24hrs. if no refresh.
 
         locations_recycler_view = (RecyclerView) findViewById(R.id.locations_list);
-        //Improves Performance
-        locations_recycler_view.setHasFixedSize(true);
+        locations_recycler_view.setHasFixedSize(true);  //Improves Performance
 
         //Layout Manager Setup
         locations_layout_manager = new LinearLayoutManager(this);
@@ -38,13 +39,26 @@ public class MainActivity extends AppCompatActivity {
         locations_recycler_view.setAdapter(locations_adapter);
     }
 
+
     private void updateData(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo != null){
-            //UpdateData.update("http://misc.brooklynpubliclibrary.org/BigApps/BPL_branch_001.xml");
+            UpdateData download = new UpdateData(this);
+            download.execute("http://misc.brooklynpubliclibrary.org/BigApps/BPL_branch_001.xml");
         } else {
             Toast.makeText(this, "Cannot Update Data\nError: 141 - No Active Network", Toast.LENGTH_LONG);
         }
+    }
+
+    /**
+     * Processes the result from the network
+     * @param output
+     */
+    @Override
+    public void processFinish(ArrayList<Branch> output) {
+        branches.clear();
+        branches.addAll(output);
+        locations_adapter.notifyDataSetChanged();
     }
 }

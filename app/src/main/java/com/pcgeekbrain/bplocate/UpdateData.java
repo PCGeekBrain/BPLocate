@@ -3,6 +3,8 @@ package com.pcgeekbrain.bplocate;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,13 +22,20 @@ import java.util.ArrayList;
 
 public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
     private static final String TAG = "UPDATE DATA";
+    private AsyncResponse response;
+
+    public UpdateData(AsyncResponse response){
+        this.response = response;
+    }
 
     @Override
-    protected ArrayList<Branch> doInBackground(String... strings) {
-        //TODO: update the data form strings[0]
-        return downloadData(strings[0]);
+    protected ArrayList<Branch> doInBackground(String... urls) {
+        return downloadData(urls[0]);
     }
-    //TODO override on post execute
+    @Override
+    protected void onPostExecute(ArrayList<Branch> result) {
+        response.processFinish(result);
+    }
 
     private ArrayList<Branch> downloadData(String input_url) {
         ArrayList<Branch> result = new ArrayList<>();
@@ -64,7 +73,6 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
     private ArrayList<Branch> parseXMLData(String data) {
         ArrayList<Branch> result = new ArrayList<>();
 
-
         //TODO FINISH
 
         return result;
@@ -72,7 +80,7 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
     private Branch parseHTMLData(String name, String HTMLData){
         String[] details = new String[5];
 
-
+        //TODO
 
         return new Branch(name, details[0], details[1], details[2], details[3]);
     }
