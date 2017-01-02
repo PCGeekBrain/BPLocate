@@ -14,10 +14,16 @@ import android.widget.Toast;
 import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse{
     public final String TAG = "MainActivity";
+    private static String filename = "library.cache";
     private RecyclerView locations_recycler_view;
     private LocationsAdapter locations_adapter;
     private RecyclerView.LayoutManager locations_layout_manager;
@@ -30,8 +36,21 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        File cache = this.getCacheDir();
-        Log.d(TAG, "onCreate: cache ->"+cache);
+        File file = new File(getFilesDir(), filename);
+        if (file.exists()){
+            Log.d(TAG, "onCreate: file exists");
+            try {
+                ObjectInputStream ois = new ObjectInputStream(openFileInput(filename));
+                branches = (ArrayList<Branch>) ois.readObject();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d(TAG, "onCreate: file does not exist");
+            updateData();
+        }
 
         locations_recycler_view = (RecyclerView) findViewById(R.id.locations_list);
         //locations_recycler_view.setHasFixedSize(true);  //Improves Performance
@@ -46,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         locations_recycler_view.setAdapter(locations_adapter);
 
         searchView.setOnQueryTextListener(searchListener);
-
-        updateData();
     }
 
     private SearchView.OnQueryTextListener searchListener = new SearchView.OnQueryTextListener() {
@@ -63,10 +80,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     };
 
     private boolean search(String query){
-        Log.d(TAG, "search: started query -> "+query);
         searchResults.clear();
-        Branch currentBranch;
-        Log.d(TAG, "search: started query.length() -> "+query.length());
         if (query.length() > 0){
             //feels faster then index pulling. NEEDS RESEARCH
             for (Branch branch : branches){
@@ -78,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         } else {
             locations_adapter.swap(branches);
         }
-        Log.d(TAG, "search: branches -> " + branches);
-        Log.d(TAG, "search: result -> " + searchResults);
         return true;
     }
 
@@ -103,5 +115,14 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         branches.clear();
         branches.addAll(output);
         locations_adapter.swap(output);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(openFileOutput(filename, Context.MODE_PRIVATE));
+            oos.writeObject(branches);
+            oos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

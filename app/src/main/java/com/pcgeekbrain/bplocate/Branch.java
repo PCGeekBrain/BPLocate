@@ -2,6 +2,7 @@ package com.pcgeekbrain.bplocate;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Calendar;
  * Branch Holding Class
  */
 
-public class Branch {
+public class Branch implements Serializable{
     private static final String TAG = "Branch";
     String name, address, number, current_status, closes_in;
     String[] hours = new String[10];
