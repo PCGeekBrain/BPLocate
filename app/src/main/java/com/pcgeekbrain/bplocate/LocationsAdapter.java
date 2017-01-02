@@ -33,7 +33,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
         holder.address.setText(branches.get(position).address);
         holder.number.setText(branches.get(position).number);
         holder.current_status.setText(branches.get(position).getClosesIn());
-        holder.closes_in.setText(branches.get(position).getClosesIn());
+        holder.closes_in.setText(branches.get(position).getHours());
     }
 
     @Override
