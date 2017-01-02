@@ -56,7 +56,6 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
                 int responseCode = connection.getResponseCode();
                 Log.d(TAG, "response code: " + responseCode);
                 inputStream = connection.getInputStream();
-
                 //convert the input stream into a string
                 data = readInput(new BufferedReader(new InputStreamReader(inputStream)));
                 result = parseXMLData(data);
@@ -73,16 +72,19 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
     private ArrayList<Branch> parseXMLData(String data) {
         ArrayList<Branch> result = new ArrayList<>();
 
-        //TODO FINISH
+        //TODO PARSE XML
+
 
         return result;
     }
     private Branch parseHTMLData(String name, String HTMLData){
-        String[] details = new String[5];
+        String address = "Unknown", number = "xxx-xxx-xxxx";
+        String[] hours = new String[]{"n/a","n/a","n/a","n/a","n/a","n/a","n/a"};
 
-        //TODO
+        //TODO PARSE HTML
 
-        return new Branch(name, details[0], details[1], details[2], details[3]);
+
+        return new Branch(name, address, number, hours);
     }
 
     private String readInput(BufferedReader bufferedReader) {

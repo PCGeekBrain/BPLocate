@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Created by Mendel on 12/12/2016.
+ * Adapter for the list
  */
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
@@ -31,7 +32,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
         holder.name.setText(branches.get(position).name);
         holder.address.setText(branches.get(position).address);
         holder.number.setText(branches.get(position).number);
-        holder.current_status.setText(branches.get(position).current_status);
+        holder.current_status.setText(branches.get(position).getClosesIn());
         holder.closes_in.setText(branches.get(position).getClosesIn());
     }
 
