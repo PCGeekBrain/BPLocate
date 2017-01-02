@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     private RecyclerView.Adapter locations_adapter;
     private RecyclerView.LayoutManager locations_layout_manager;
     private ArrayList<Branch> branches = new ArrayList<>();
+    private ArrayList<Branch> searchResults = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         //TODO: see if updated in last 24hrs. if no refresh.
 
         locations_recycler_view = (RecyclerView) findViewById(R.id.locations_list);
-        locations_recycler_view.setHasFixedSize(true);  //Improves Performance
+        //locations_recycler_view.setHasFixedSize(true);  //Improves Performance
 
         //Layout Manager Setup
         locations_layout_manager = new LinearLayoutManager(this);
