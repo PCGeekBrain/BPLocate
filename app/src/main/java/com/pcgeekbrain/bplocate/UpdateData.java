@@ -3,15 +3,21 @@ package com.pcgeekbrain.bplocate;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.BufferedReader;
+import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Mendel on 12/12/2016.
@@ -20,13 +26,20 @@ import java.util.ArrayList;
 
 public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
     private static final String TAG = "UPDATE DATA";
+    private AsyncResponse response;
+
+    public UpdateData(AsyncResponse response){
+        this.response = response;
+    }
 
     @Override
-    protected ArrayList<Branch> doInBackground(String... strings) {
-        //TODO: update the data form strings[0]
-        return downloadData(strings[0]);
+    protected ArrayList<Branch> doInBackground(String... urls) {
+        return downloadData(urls[0]);
     }
-    //TODO override on post execute
+    @Override
+    protected void onPostExecute(ArrayList<Branch> result) {
+        response.processFinish(result);
+    }
 
     private ArrayList<Branch> downloadData(String input_url) {
         ArrayList<Branch> result = new ArrayList<>();
@@ -47,10 +60,11 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
                 int responseCode = connection.getResponseCode();
                 Log.d(TAG, "response code: " + responseCode);
                 inputStream = connection.getInputStream();
-
                 //convert the input stream into a string
-                data = readInput(new BufferedReader(new InputStreamReader(inputStream)));
-                result = parseXMLData(data);
+                XmlPullParser xmlParser = XmlPullParserFactory.newInstance().newPullParser();
+                xmlParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                xmlParser.setInput(inputStream, null);
+                result = parseXMLData(xmlParser);
             } finally {
                 if (inputStream != null) {inputStream.close();}
             }
@@ -61,38 +75,62 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         return result;
     }
 
-    private ArrayList<Branch> parseXMLData(String data) {
+    private ArrayList<Branch> parseXMLData(XmlPullParser parser) throws XmlPullParserException, IOException {
         ArrayList<Branch> result = new ArrayList<>();
+        int eventType = parser.getEventType();
+        Branch currentBranch = null;
 
-
-        //TODO FINISH
-
-        return result;
-    }
-    private Branch parseHTMLData(String name, String HTMLData){
-        String[] details = new String[5];
-
-
-
-        return new Branch(name, details[0], details[1], details[2], details[3]);
-    }
-
-    private String readInput(BufferedReader bufferedReader) {
-        String status = "" , result = "";
-        int lines = 0;
-
-        while (status != null)
-            try {
-                status = bufferedReader.readLine();
-                if (status != null){
-                    result += status;
-                    lines++;
-                }
-            } catch (Exception e) {
-                status = null;
-                Log.e(TAG, "readInput -> Exception:" + e.getMessage() +"\n", e.fillInStackTrace());
+        while (eventType != XmlPullParser.END_DOCUMENT){
+            String name = null;
+            switch (eventType){
+                case XmlPullParser.START_TAG:
+                    name = parser.getName();
+                    if (name.equalsIgnoreCase("item")){
+                        currentBranch = new Branch();
+                    } else if (currentBranch != null){
+                        if (name.equalsIgnoreCase("title")){
+                            currentBranch.name = parser.nextText();
+                        } else if (name.equalsIgnoreCase("description")){
+                            parseHTMLData(parser.nextText(), currentBranch);
+                        }
+                    }
+                    break;
+                case XmlPullParser.END_TAG:
+                    name = parser.getName();
+                    if (name.equalsIgnoreCase("item") && currentBranch != null){
+                        result.add(currentBranch);
+                    }
             }
-        Log.d(TAG, "readInput -> Lines: " + lines);
+            eventType = parser.next();
+        }
+
         return result;
+    }
+    private void parseHTMLData(String HTMLData, Branch currentBranch){
+        String[] hours = new String[]{"n/a","n/a","n/a","n/a","n/a","n/a","n/a"};
+
+        //TODO PARSE HTML
+        Document doc = Jsoup.parse(HTMLData);
+        Element table = doc.select("table").first();
+        Iterator<Element> ite = table.select("td").iterator();
+        ite.next(); //Address:
+        currentBranch.address = ite.next().text();
+        ite.next(); //Phone:
+        currentBranch.number = ite.next().text();
+        ite.next();  //Monday
+        hours[0] = ite.next().text();
+        ite.next();  //Tuesday
+        hours[1] = ite.next().text();
+        ite.next();  //Wednesday
+        hours[2] = ite.next().text();
+        ite.next();  //Thursday
+        hours[3] = ite.next().text();
+        ite.next();  //Friday
+        hours[4] = ite.next().text();
+        ite.next();  //Saturday
+        hours[5] = ite.next().text();
+        ite.next();  //Sunday
+        hours[6] = ite.next().text();
+        currentBranch.hours = hours;
     }
 }

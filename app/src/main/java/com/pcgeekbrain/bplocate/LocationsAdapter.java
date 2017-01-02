@@ -10,13 +10,14 @@ import java.util.List;
 
 /**
  * Created by Mendel on 12/12/2016.
+ * Adapter for the list
  */
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
-    ArrayList<Branch> branches;
+    ArrayList<Branch> branches = new ArrayList<>();
 
     LocationsAdapter(ArrayList<Branch> branches){
-        this.branches = branches;
+        this.branches.addAll(branches);
     }
 
     @Override
@@ -31,12 +32,18 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
         holder.name.setText(branches.get(position).name);
         holder.address.setText(branches.get(position).address);
         holder.number.setText(branches.get(position).number);
-        holder.current_status.setText(branches.get(position).current_status);
-        holder.closes_in.setText(branches.get(position).getClosesIn());
+        holder.current_status.setText(branches.get(position).getClosesIn());
+        holder.closes_in.setText(branches.get(position).getHours());
     }
 
     @Override
     public int getItemCount() {
         return branches.size();
+    }
+
+    public void swap(ArrayList<Branch> data){
+        this.branches.clear();
+        this.branches.addAll(data);
+        notifyDataSetChanged();
     }
 }
