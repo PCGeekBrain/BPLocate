@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
@@ -18,10 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements AsyncResponse{
+public class MainActivity extends AppCompatActivity implements AsyncResponse, View.OnClickListener {
     public final String TAG = "MainActivity";
     private static String filename = "library.cache";
     private RecyclerView locations_recycler_view;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     private ArrayList<Branch> branches = new ArrayList<>();
     private ArrayList<Branch> searchResults = new ArrayList<>();
     private SearchView searchView;
+    private ImageView refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         locations_recycler_view = (RecyclerView) findViewById(R.id.locations_list);
         //locations_recycler_view.setHasFixedSize(true);  //Improves Performance
         searchView = (SearchView)findViewById(R.id.search);
+        refresh = (ImageView)findViewById(R.id.refresh);
+        refresh.setOnClickListener(this);
 
         //Layout Manager Setup
         locations_layout_manager = new LinearLayoutManager(this);
@@ -102,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             UpdateData download = new UpdateData(this);
             download.execute("http://misc.brooklynpubliclibrary.org/BigApps/BPL_branch_001.xml");
         } else {
-            Toast.makeText(this, "Cannot Update Data\nError: 141 - No Active Network", Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationContext(), "Cannot Update Data\nError: 141 - No Active Network", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -124,5 +128,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        updateData();
+        Toast.makeText(getApplicationContext(), "Updating...", Toast.LENGTH_LONG).show();
     }
 }
