@@ -14,10 +14,10 @@ import java.util.List;
  */
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
-    ArrayList<Branch> branches;
+    ArrayList<Branch> branches = new ArrayList<>();
 
     LocationsAdapter(ArrayList<Branch> branches){
-        this.branches = branches;
+        this.branches.addAll(branches);
     }
 
     @Override
@@ -39,5 +39,11 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
     @Override
     public int getItemCount() {
         return branches.size();
+    }
+
+    public void swap(ArrayList<Branch> data){
+        this.branches.clear();
+        this.branches.addAll(data);
+        notifyDataSetChanged();
     }
 }

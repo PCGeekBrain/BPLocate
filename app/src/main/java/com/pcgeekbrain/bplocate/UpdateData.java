@@ -88,7 +88,6 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
 
         while (eventType != XmlPullParser.END_DOCUMENT){
             String name = null;
-            Log.d(TAG, "parseXMLData: eventType -> " + eventType);
             switch (eventType){
                 case XmlPullParser.START_TAG:
                     name = parser.getName();
@@ -114,7 +113,6 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         return result;
     }
     private void parseHTMLData(String HTMLData, Branch currentBranch){
-        Log.d(TAG, "parseHTMLData: STARTED");
         String[] hours = new String[]{"n/a","n/a","n/a","n/a","n/a","n/a","n/a"};
 
         //TODO PARSE HTML
@@ -139,7 +137,6 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         hours[5] = ite.next().text();
         ite.next();  //Sunday
         hours[6] = ite.next().text();
-        Log.d(TAG, "parseHTMLData: hours -> " + hours);
         currentBranch.hours = hours;
     }
 }

@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 /**
  * Created by Mendel on 12/12/2016.
+ * Branch Holding Class
  */
 
 public class Branch {
@@ -35,7 +36,6 @@ public class Branch {
     }
     public String getHours(){
         int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        Log.d(TAG, "getHours: day -> " + day);
         switch (day){
             case Calendar.MONDAY:
                 return hours[0];
