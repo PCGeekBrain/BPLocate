@@ -121,28 +121,25 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         //TODO PARSE HTML
         Document doc = Jsoup.parse(HTMLData);
         Element table = doc.select("table").first();
-        Elements ite = table.select("td");
-        for (Element item : ite){
-            Log.d(TAG, "parseHTMLData: item.text -> "+item.text());
-        }
-    }
-
-    private String readInput(BufferedReader bufferedReader) {
-        String status = "" , result = "";
-        int lines = 0;
-
-        while (status != null)
-            try {
-                status = bufferedReader.readLine();
-                if (status != null){
-                    result += status;
-                    lines++;
-                }
-            } catch (Exception e) {
-                status = null;
-                Log.e(TAG, "readInput -> Exception:" + e.getMessage() +"\n", e.fillInStackTrace());
-            }
-        Log.d(TAG, "readInput -> Lines: " + lines);
-        return result;
+        Iterator<Element> ite = table.select("td").iterator();
+        ite.next(); //Address:
+        currentBranch.address = ite.next().text();
+        ite.next(); //Phone:
+        currentBranch.number = ite.next().text();
+        ite.next();  //Monday
+        hours[0] = ite.next().text();
+        ite.next();  //Tuesday
+        hours[1] = ite.next().text();
+        ite.next();  //Wednesday
+        hours[2] = ite.next().text();
+        ite.next();  //Thursday
+        hours[3] = ite.next().text();
+        ite.next();  //Friday
+        hours[4] = ite.next().text();
+        ite.next();  //Saturday
+        hours[5] = ite.next().text();
+        ite.next();  //Sunday
+        hours[6] = ite.next().text();
+        currentBranch.hours = hours;
     }
 }
