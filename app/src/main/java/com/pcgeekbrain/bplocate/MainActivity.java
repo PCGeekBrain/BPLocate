@@ -15,7 +15,6 @@ import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse{
     public final String TAG = "MainActivity";
@@ -69,17 +68,15 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         Branch currentBranch;
         Log.d(TAG, "search: started query.length() -> "+query.length());
         if (query.length() > 0){
-            for (int i = 0; i< branches.size(); i++){
-                currentBranch = branches.get(i);
-                if (currentBranch.name.toLowerCase().contains(query.toLowerCase())){
-                    searchResults.add(currentBranch);
+            //feels faster then index pulling. NEEDS RESEARCH
+            for (Branch branch : branches){
+                if (branch.name.toLowerCase().contains(query.toLowerCase())){
+                    searchResults.add(branch);
                 }
             }
             locations_adapter.swap(searchResults);
-            Log.d(TAG, "search: ADAPTER SWAPED");
         } else {
             locations_adapter.swap(branches);
-            Log.d(TAG, "search: LIST RESET");
         }
         Log.d(TAG, "search: branches -> " + branches);
         Log.d(TAG, "search: result -> " + searchResults);

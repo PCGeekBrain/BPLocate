@@ -1,7 +1,6 @@
 package com.pcgeekbrain.bplocate;
 
 import android.os.AsyncTask;
-import android.provider.DocumentsContract;
 import android.util.Log;
 
 import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
@@ -9,18 +8,13 @@ import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
