@@ -1,9 +1,18 @@
 package com.pcgeekbrain.bplocate;
 
 import android.os.AsyncTask;
+import android.provider.DocumentsContract;
 import android.util.Log;
 
 import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Mendel on 12/12/2016.
@@ -57,8 +67,10 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
                 Log.d(TAG, "response code: " + responseCode);
                 inputStream = connection.getInputStream();
                 //convert the input stream into a string
-                data = readInput(new BufferedReader(new InputStreamReader(inputStream)));
-                result = parseXMLData(data);
+                XmlPullParser xmlParser = XmlPullParserFactory.newInstance().newPullParser();
+                xmlParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                xmlParser.setInput(inputStream, null);
+                result = parseXMLData(xmlParser);
             } finally {
                 if (inputStream != null) {inputStream.close();}
             }
@@ -69,22 +81,50 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         return result;
     }
 
-    private ArrayList<Branch> parseXMLData(String data) {
+    private ArrayList<Branch> parseXMLData(XmlPullParser parser) throws XmlPullParserException, IOException {
         ArrayList<Branch> result = new ArrayList<>();
+        int eventType = parser.getEventType();
+        Branch currentBranch = null;
 
-        //TODO PARSE XML
-
+        while (eventType != XmlPullParser.END_DOCUMENT){
+            String name = null;
+            Log.d(TAG, "parseXMLData: eventType -> " + eventType);
+            switch (eventType){
+                case XmlPullParser.START_TAG:
+                    name = parser.getName();
+                    if (name.equalsIgnoreCase("item")){
+                        currentBranch = new Branch();
+                    } else if (currentBranch != null){
+                        if (name.equalsIgnoreCase("title")){
+                            currentBranch.name = parser.nextText();
+                        } else if (name.equalsIgnoreCase("description")){
+                            parseHTMLData(parser.nextText(), currentBranch);
+                        }
+                    }
+                    break;
+                case XmlPullParser.END_TAG:
+                    name = parser.getName();
+                    if (name.equalsIgnoreCase("item") && currentBranch != null){
+                        result.add(currentBranch);
+                    }
+            }
+            eventType = parser.next();
+        }
 
         return result;
     }
-    private Branch parseHTMLData(String name, String HTMLData){
+    private void parseHTMLData(String HTMLData, Branch currentBranch){
+        Log.d(TAG, "parseHTMLData: STARTED");
         String address = "Unknown", number = "xxx-xxx-xxxx";
         String[] hours = new String[]{"n/a","n/a","n/a","n/a","n/a","n/a","n/a"};
 
         //TODO PARSE HTML
-
-
-        return new Branch(name, address, number, hours);
+        Document doc = Jsoup.parse(HTMLData);
+        Element table = doc.select("table").first();
+        Elements ite = table.select("td");
+        for (Element item : ite){
+            Log.d(TAG, "parseHTMLData: item.text -> "+item.text());
+        }
     }
 
     private String readInput(BufferedReader bufferedReader) {

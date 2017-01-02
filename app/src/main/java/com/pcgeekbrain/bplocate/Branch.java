@@ -11,7 +11,15 @@ import java.util.Calendar;
 public class Branch {
     private static final String TAG = "Branch";
     String name, address, number, current_status, closes_in;
-    String[] hours;
+    String[] hours = new String[10];
+
+    public Branch(){
+        this.name = "";
+        this.address = "";
+        this.number = "";
+        this.current_status = "N/A";
+        this.closes_in = "";
+    }
 
     public Branch(String name, String address, String number, String[] hours){
         this.name = name;

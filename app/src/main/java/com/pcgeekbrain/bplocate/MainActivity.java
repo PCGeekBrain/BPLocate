@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         //Add an adapter
         locations_adapter = new LocationsAdapter(branches);
         locations_recycler_view.setAdapter(locations_adapter);
+
+        updateData();
     }
 
 
