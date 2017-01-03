@@ -2,6 +2,8 @@ package com.pcgeekbrain.bplocate;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -14,12 +16,14 @@ public class Branch implements Serializable{
     private static final String TAG = "Branch";
     private String name = "", address = "", number= "", closes_in = "";
     private String[] hours = new String[10];
+    private LatLng location;
 
     public Branch(){
         this.name = "";
         this.address = "";
         this.number = "";
         this.closes_in = "";
+        this.location = new LatLng(40.7128, -74.0059);
     }
 
     public String toString(){
