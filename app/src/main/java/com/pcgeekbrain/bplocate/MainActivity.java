@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
     private ArrayList<Branch> searchResults = new ArrayList<>();
     private SearchView searchView;
     private ImageView refresh;
+    private boolean update = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
         }
 
         locations_recycler_view = (RecyclerView) findViewById(R.id.locations_list);
-        //locations_recycler_view.setHasFixedSize(true);  //Improves Performance
+        locations_recycler_view.setHasFixedSize(true);  //Improves Performance
         searchView = (SearchView)findViewById(R.id.search);
         refresh = (ImageView)findViewById(R.id.refresh);
         refresh.setOnClickListener(this);
@@ -84,16 +85,12 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
     };
 
     private boolean search(String query){
-        searchResults.clear();
         if (query.length() > 0){
-            //feels faster then index pulling. NEEDS RESEARCH
-            for (Branch branch : branches){
-                if (branch.name.toLowerCase().contains(query.toLowerCase())){
-                    searchResults.add(branch);
-                }
-            }
-            locations_adapter.swap(searchResults);
+            SearchTask searchTask = new SearchTask(this, branches);
+            searchTask.execute(query);
+            update = true;
         } else {
+            update = false;
             locations_adapter.swap(branches);
         }
         return true;
@@ -116,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
      */
     @Override
     public void processFinish(ArrayList<Branch> output) {
+        Log.d(TAG, "processFinish: output.size -> "+output.size());
         branches.clear();
         branches.addAll(output);
         locations_adapter.swap(output);
@@ -131,8 +129,19 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
     }
 
     @Override
+    public void searchFinish(ArrayList<Branch> result) {
+        if (update){
+            Log.d(TAG, "searchFinish: updating search");
+            searchResults.clear();
+            searchResults.addAll(result);
+            locations_adapter.swap(searchResults);
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         updateData();
+        locations_adapter.updateTime();
         Toast.makeText(getApplicationContext(), "Updating...", Toast.LENGTH_LONG).show();
     }
 }

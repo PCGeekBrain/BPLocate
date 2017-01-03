@@ -89,7 +89,7 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
                         currentBranch = new Branch();
                     } else if (currentBranch != null){
                         if (name.equalsIgnoreCase("title")){
-                            currentBranch.name = parser.nextText();
+                            currentBranch.setName(parser.nextText());
                         } else if (name.equalsIgnoreCase("description")){
                             parseHTMLData(parser.nextText(), currentBranch);
                         }
@@ -114,9 +114,12 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         Element table = doc.select("table").first();
         Iterator<Element> ite = table.select("td").iterator();
         ite.next(); //Address:
-        currentBranch.address = ite.next().text();
+        String address = ite.next().text();
+        address = address.replaceAll("Brooklyn, NY", "\nBrooklyn, NY ");
+        Log.d(TAG, "parseHTMLData: address -> "+address);
+        currentBranch.setAddress(address);
         ite.next(); //Phone:
-        currentBranch.number = ite.next().text();
+        currentBranch.setNumber(ite.next().text());
         ite.next();  //Monday
         hours[0] = ite.next().text();
         ite.next();  //Tuesday
@@ -131,6 +134,6 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         hours[5] = ite.next().text();
         ite.next();  //Sunday
         hours[6] = ite.next().text();
-        currentBranch.hours = hours;
+        currentBranch.setHours(hours);
     }
 }
