@@ -115,8 +115,7 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         Iterator<Element> ite = table.select("td").iterator();
         ite.next(); //Address:
         String address = ite.next().text();
-        address.replaceAll("Brooklyn", "\nBrooklyn");
-        address.replaceAll("NY", "NY ");
+        address = address.replaceAll("Brooklyn, NY", "\nBrooklyn, NY ");
         Log.d(TAG, "parseHTMLData: address -> "+address);
         currentBranch.setAddress(address);
         ite.next(); //Phone:

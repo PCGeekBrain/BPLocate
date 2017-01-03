@@ -15,7 +15,8 @@
         android:textAllCaps="false"
         android:textSize="24sp"
         tools:text="Eastern Parkway"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:layout_toStartOf="@+id/loc_hours" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,10 +46,12 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="TextView"
+        android:text="Closed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/loc_name"
+        android:id="@+id/loc_hours"
+        android:layout_alignBottom="@+id/loc_name"
         android:layout_alignParentEnd="true"
-        android:id="@+id/loc_hours" />
+        android:layout_alignTop="@+id/loc_name"
+        android:gravity="center_vertical" />
 </RelativeLayout>
