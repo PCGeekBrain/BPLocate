@@ -26,15 +26,18 @@ public class Branch implements Serializable{
         return "Branch: name -> " + this.name;
     }
 
-    public String getClosesIn(int hour, int day){
+    public String getClosesIn(int hour, int day, int amOrPm){
         String hours = getHours(day);
         String[] parts = hours.split("-");
         if (parts.length > 1){
             int closingTime = Integer.parseInt(parts[1]);
+            int openingTime = Integer.parseInt(parts[0]);
             Log.d(TAG, "getClosesIn: closingTime -> "+closingTime);
             Log.d(TAG, "getClosesIn: hour -> "+hour);
-            if (closingTime > hour){
-                return "Closes in " + ((closingTime - hour) -1 ) + " hours";
+            if (amOrPm == Calendar.PM && closingTime > hour){
+                return "Closes within " + ((closingTime - hour)) + " hours";
+            } else if (amOrPm == Calendar.AM && openingTime < hour && openingTime > 6){
+                return "Closes within " + ((Math.abs(hour - 12) + closingTime)) + " hours";
             } else {
                 return "Closed";
             }

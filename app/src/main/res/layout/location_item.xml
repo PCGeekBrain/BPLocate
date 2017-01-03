@@ -48,10 +48,10 @@
     <TextView
         android:text="Closed"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/loc_hours"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/loc_name"
         android:layout_alignBottom="@+id/loc_name"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/loc_name"
-        android:gravity="center_vertical" />
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

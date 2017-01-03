@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
     @Override
     public void onClick(View view) {
         updateData();
+        locations_adapter.updateTime();
         Toast.makeText(getApplicationContext(), "Updating...", Toast.LENGTH_LONG).show();
     }
 }

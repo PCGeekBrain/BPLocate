@@ -16,9 +16,10 @@ import java.util.List;
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
     ArrayList<Branch> branches = new ArrayList<>();
-    Calendar calendar = Calendar.getInstance();
-    int day = calendar.get(Calendar.DAY_OF_WEEK);
-    int hour = calendar.get(Calendar.HOUR);
+    private Calendar calendar = Calendar.getInstance();
+    private int day = calendar.get(Calendar.DAY_OF_WEEK);
+    private int hour = calendar.get(Calendar.HOUR);
+    private int amOrPM = calendar.get(Calendar.AM_PM);
 
     LocationsAdapter(ArrayList<Branch> branches){
         this.branches.addAll(branches);
@@ -37,7 +38,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
         holder.address.setText(branches.get(position).getAddress());
         holder.number.setText(branches.get(position).getNumber());
         holder.hours.setText(branches.get(position).getHours(this.day));
-        holder.closes_in.setText(branches.get(position).getClosesIn(this.hour, this.day));
+        holder.closes_in.setText(branches.get(position).getClosesIn(this.hour, this.day, this.amOrPM));
     }
 
     @Override
@@ -49,5 +50,11 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
         this.branches.clear();
         this.branches.addAll(data);
         notifyDataSetChanged();
+    }
+    public void updateTime(){
+        calendar = Calendar.getInstance();
+        day = calendar.get(Calendar.DAY_OF_WEEK);
+        hour = calendar.get(Calendar.HOUR);
+        amOrPM = calendar.get(Calendar.AM_PM);
     }
 }
