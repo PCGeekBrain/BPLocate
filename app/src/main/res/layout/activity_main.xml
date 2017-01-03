@@ -47,7 +47,8 @@
         android:scaleType="centerCrop"
         android:layout_height="150dp"
         android:contentDescription="Brooklyn Bridge"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:visibility="gone" />
 
     <TextView
         android:text="Brooklyn Public Library's"
@@ -61,7 +62,8 @@
         android:textSize="24sp"
         android:textColor="@android:color/background_light"
         android:fontFamily="casual"
-        android:textStyle="normal|bold" />
+        android:textStyle="normal|bold"
+        android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="0dp"

@@ -16,7 +16,9 @@ import java.util.List;
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
     ArrayList<Branch> branches = new ArrayList<>();
-    int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+    Calendar calendar = Calendar.getInstance();
+    int day = calendar.get(Calendar.DAY_OF_WEEK);
+    int hour = calendar.get(Calendar.HOUR);
 
     LocationsAdapter(ArrayList<Branch> branches){
         this.branches.addAll(branches);
@@ -35,7 +37,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
         holder.address.setText(branches.get(position).getAddress());
         holder.number.setText(branches.get(position).getNumber());
         holder.hours.setText(branches.get(position).getHours(this.day));
-        holder.closes_in.setText(branches.get(position).getClosesIn());
+        holder.closes_in.setText(branches.get(position).getClosesIn(this.hour, this.day));
     }
 
     @Override

@@ -22,8 +22,24 @@ public class Branch implements Serializable{
         this.closes_in = "";
     }
 
-    public String getClosesIn(){
-        return closes_in;
+    public String toString(){
+        return "Branch: name -> " + this.name;
+    }
+
+    public String getClosesIn(int hour, int day){
+        String hours = getHours(day);
+        String[] parts = hours.split("-");
+        if (parts.length > 1){
+            int closingTime = Integer.parseInt(parts[1]);
+            Log.d(TAG, "getClosesIn: closingTime -> "+closingTime);
+            Log.d(TAG, "getClosesIn: hour -> "+hour);
+            if (closingTime > hour){
+                return "Closes in " + ((closingTime - hour) -1 ) + " hours";
+            } else {
+                return "Closed";
+            }
+        }
+        return "";
     }
     public String getHours(int day){
         switch (day){

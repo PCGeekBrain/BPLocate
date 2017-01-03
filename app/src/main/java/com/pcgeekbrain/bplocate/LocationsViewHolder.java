@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 /**
  * Created by Mendel on 12/12/2016.
+ * Just a view Holder for LocationsAdapter.java
  */
 
 public class LocationsViewHolder extends RecyclerView.ViewHolder{
