@@ -16,14 +16,15 @@ public class Branch implements Serializable{
     private static final String TAG = "Branch";
     private String name = "", address = "", number= "", closes_in = "";
     private String[] hours = new String[10];
-    private LatLng location;
+    private double lat, lng;
 
     public Branch(){
         this.name = "";
         this.address = "";
         this.number = "";
         this.closes_in = "";
-        this.location = new LatLng(40.7128, -74.0059);
+        this.lat = 0;
+        this.lng = 0;
     }
 
     public String toString(){
@@ -95,5 +96,21 @@ public class Branch implements Serializable{
 
     public void setHours(String[] hours){
         this.hours = hours;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
     }
 }

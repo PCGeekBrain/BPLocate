@@ -1,8 +1,12 @@
 package com.pcgeekbrain.bplocate;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.pcgeekbrain.bplocate.interfaces.AsyncResponse;
 
 import org.jsoup.Jsoup;
@@ -18,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Mendel on 12/12/2016.
@@ -27,9 +32,11 @@ import java.util.Iterator;
 public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
     private static final String TAG = "UPDATE DATA";
     private AsyncResponse response;
+    Geocoder gc;
 
-    public UpdateData(AsyncResponse response){
+    public UpdateData(AsyncResponse response, Context context){
         this.response = response;
+        this.gc = new Geocoder(context);
     }
 
     @Override
@@ -115,7 +122,18 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         Iterator<Element> ite = table.select("td").iterator();
         ite.next(); //Address:
         String address = ite.next().text();
-        address = address.replaceAll("Brooklyn, NY", "\nBrooklyn, NY ");
+        address = address.replaceAll("Brooklyn, NY", "Brooklyn, NY ");
+        try {
+            List<Address> temp = gc.getFromLocationName(address, 1);
+            if (temp.size() > 0){
+                currentBranch.setLat(temp.get(0).getLatitude());
+                currentBranch.setLng(temp.get(0).getLongitude());
+            } else {
+                Log.e(TAG, "parseHTMLData: ERROR NO COORDINATES FOUND. address -> " + currentBranch.getName());
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "parseHTMLData: ERROR: UNABLE TO GET LatLng FROM address", e);
+        }
         Log.d(TAG, "parseHTMLData: address -> "+address);
         currentBranch.setAddress(address);
         ite.next(); //Phone:

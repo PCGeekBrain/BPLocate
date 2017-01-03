@@ -27,16 +27,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse, View.OnClickListener, OnMapReadyCallback {
-    public final String TAG = "MainActivity";
+    private static final String TAG = "MainActivity";
+    private static final int MY_PERMISSION_REQUEST_LOCATION = 1;
     private static String filename = "library.cache";
     private ArrayList<Branch> branches = new ArrayList<>();
     private ArrayList<Branch> searchResults = new ArrayList<>();
+    private ArrayList<Marker> markers = new ArrayList<>(50);
     private SearchView searchView;
     private ImageView refresh;
     private GoogleMap mGoogleMap;
+    private int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo != null) {
-            UpdateData download = new UpdateData(this);
+            UpdateData download = new UpdateData(this, this);
             download.execute("http://misc.brooklynpubliclibrary.org/BigApps/BPL_branch_001.xml");
         } else {
             Toast.makeText(getApplicationContext(), "Cannot Update Data\nError: 141 - No Active Network", Toast.LENGTH_LONG).show();
@@ -97,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
         branches.clear();
         branches.addAll(output);
         //TODO Update MAP
+        setUpMap();
         try {
             ObjectOutputStream oos = new ObjectOutputStream(openFileOutput(filename, Context.MODE_PRIVATE));
             oos.writeObject(branches);
@@ -156,24 +161,49 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            mGoogleMap.setMyLocationEnabled(true);
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSION_REQUEST_LOCATION);
+
+            //return; //Remove this?
         } else {
-            //TODO show why
+            mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ny, 10));
+            this.setUpMap();
         }
-
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ny, 10));
-
+        
         //TODO add all the branches
         mGoogleMap.addMarker(new MarkerOptions()
                 .title("NYC")
                 .snippet("The Big Apple")
                 .position(ny));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults){
+        switch (requestCode){
+            case MY_PERMISSION_REQUEST_LOCATION:
+                setUpMap();
+                break;
+        }
+    }
+    
+    private void setUpMap(){
+        for (Marker marker : markers){
+            marker.remove();
+        }
+        markers.clear();
+        LatLng ny = new LatLng(40.7128, -74.0059);
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ny, 10));
+        Log.d(TAG, "setUpMap: branches size -> "+branches.size());
+        for (Branch branch : branches){
+            Log.d(TAG, "setUpMap: adding marker to branch ("+branch.getName()+") at ("+branch.getLat()+", "+branch.getLng()+")");
+            Marker temp = mGoogleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(branch.getLat(), branch.getLng()))
+                    .title(branch.getName())
+                    .snippet(branch.getHours(day)));
+            markers.add(temp);
+        }
     }
 }
