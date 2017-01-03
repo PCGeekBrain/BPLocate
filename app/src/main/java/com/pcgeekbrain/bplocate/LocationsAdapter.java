@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
     ArrayList<Branch> branches = new ArrayList<>();
+    int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
     LocationsAdapter(ArrayList<Branch> branches){
         this.branches.addAll(branches);
@@ -29,11 +31,11 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsViewHolder>{
 
     @Override
     public void onBindViewHolder(LocationsViewHolder holder, int position) {
-        holder.name.setText(branches.get(position).name);
-        holder.address.setText(branches.get(position).address);
-        holder.number.setText(branches.get(position).number);
-        holder.current_status.setText(branches.get(position).getClosesIn());
-        holder.closes_in.setText(branches.get(position).getHours());
+        holder.name.setText(branches.get(position).getName());
+        holder.address.setText(branches.get(position).getAddress());
+        holder.number.setText(branches.get(position).getNumber());
+        holder.hours.setText(branches.get(position).getHours(this.day));
+        holder.closes_in.setText(branches.get(position).getClosesIn());
     }
 
     @Override

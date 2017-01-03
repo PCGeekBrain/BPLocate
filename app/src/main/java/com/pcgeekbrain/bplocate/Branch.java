@@ -12,31 +12,20 @@ import java.util.Calendar;
 
 public class Branch implements Serializable{
     private static final String TAG = "Branch";
-    String name, address, number, current_status, closes_in;
-    String[] hours = new String[10];
+    private String name = "", address = "", number= "", closes_in = "";
+    private String[] hours = new String[10];
 
     public Branch(){
         this.name = "";
         this.address = "";
         this.number = "";
-        this.current_status = "N/A";
         this.closes_in = "";
-    }
-
-    public Branch(String name, String address, String number, String[] hours){
-        this.name = name;
-        this.address = address;
-        this.number = number;
-        this.current_status = "N/A";
-        this.closes_in = "";
-        this.hours = hours;
     }
 
     public String getClosesIn(){
         return closes_in;
     }
-    public String getHours(){
-        int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+    public String getHours(int day){
         switch (day){
             case Calendar.MONDAY:
                 return hours[0];
@@ -55,5 +44,33 @@ public class Branch implements Serializable{
             default:
                 return "N/A";
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public void setHours(String[] hours){
+        this.hours = hours;
     }
 }

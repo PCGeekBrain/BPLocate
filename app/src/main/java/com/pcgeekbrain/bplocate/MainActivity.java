@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
         }
 
         locations_recycler_view = (RecyclerView) findViewById(R.id.locations_list);
-        //locations_recycler_view.setHasFixedSize(true);  //Improves Performance
+        locations_recycler_view.setHasFixedSize(true);  //Improves Performance
         searchView = (SearchView)findViewById(R.id.search);
         refresh = (ImageView)findViewById(R.id.refresh);
         refresh.setOnClickListener(this);
@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
     @Override
     public void searchFinish(ArrayList<Branch> result) {
         if (update){
+            Log.d(TAG, "searchFinish: updating search");
             searchResults.clear();
             searchResults.addAll(result);
             locations_adapter.swap(searchResults);
