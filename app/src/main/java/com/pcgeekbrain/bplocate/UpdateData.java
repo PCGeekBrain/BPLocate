@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Mendel on 12/12/2016.
@@ -36,7 +37,7 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
 
     public UpdateData(AsyncResponse response, Context context){
         this.response = response;
-        this.gc = new Geocoder(context);
+        this.gc = new Geocoder(context, Locale.US);
     }
 
     @Override
@@ -124,12 +125,13 @@ public class UpdateData extends AsyncTask<String, Void, ArrayList<Branch>>{
         String address = ite.next().text();
         address = address.replaceAll("Brooklyn, NY", "Brooklyn, NY ");
         try {
-            List<Address> temp = gc.getFromLocationName(address, 1);
+            Log.d(TAG, "parseHTMLData: " + address.split("(at|Brooklyn)")[0]);
+            List<Address> temp = gc.getFromLocationName(address.split("(\\sat|\\sBrooklyn)")[0], 1);
             if (temp.size() > 0){
                 currentBranch.setLat(temp.get(0).getLatitude());
                 currentBranch.setLng(temp.get(0).getLongitude());
             } else {
-                Log.e(TAG, "parseHTMLData: ERROR NO COORDINATES FOUND. address -> " + currentBranch.getName());
+                Log.e(TAG, "parseHTMLData: ERROR NO COORDINATES FOUND. address -> " + address.split("(at|Brooklyn)")[0]);
             }
         } catch (IOException e) {
             Log.e(TAG, "parseHTMLData: ERROR: UNABLE TO GET LatLng FROM address", e);

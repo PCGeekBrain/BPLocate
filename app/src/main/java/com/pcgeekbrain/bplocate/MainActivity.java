@@ -29,6 +29,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse, View.OnClickListener, OnMapReadyCallback {
     private static final String TAG = "MainActivity";
@@ -40,13 +41,19 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, Vi
     private SearchView searchView;
     private ImageView refresh;
     private GoogleMap mGoogleMap;
+    private Geocoder geocoder;
     private int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        geocoder = new Geocoder(this, Locale.US);
+        try {
+            Log.d(TAG, "onCreate: geocode test -> "+geocoder.getFromLocationName("1265 43rd St. at 13th Ave.<br>Brooklyn, NY11219", 1));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         loadCache();
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
