@@ -1,13 +1,13 @@
 # BPLocate
 An android application that downloads Brooklyn Public Library information from NYC open data and displays it in a list
 
-##Features:
+## Features:
 * Cahches parsed data to local device
 * Update data by hitting the wrench on top
 * Search for librarys using the serachbar (Algorithum looks for items containing the query ignoing case)
 
-##TODO
+## TODO
 * Link the library to open in Google Maps
 
 ---
-#Enjoy!
+# Enjoy!
